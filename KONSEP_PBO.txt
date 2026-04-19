@@ -1,0 +1,385 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║           KONSEP PBO LANJUT YANG DIGUNAKAN DALAM PROYEK              ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+Proyek ini mengimplementasikan berbagai konsep PBO Lanjut yang telah
+dipelajari di mata kuliah. Berikut penjelasan detail setiap konsep:
+
+═══════════════════════════════════════════════════════════════════════
+
+1. ENCAPSULATION (Enkapsulasi)
+═══════════════════════════════════════════════════════════════════════
+
+File: Pegawai.java
+
+Konsep:
+- Semua atribut dibuat private
+- Akses ke atribut melalui public getter dan setter
+- Data hiding untuk keamanan
+
+Contoh Kode:
+```java
+public class Pegawai {
+    private int id;           // private - tidak bisa diakses langsung
+    private String nama;      // private
+    private double gaji;      // private
+    
+    public String getNama() { // public getter
+        return nama;
+    }
+    
+    public void setNama(String nama) { // public setter
+        this.nama = nama;
+    }
+}
+```
+
+Manfaat:
+✓ Data terlindungi dari akses langsung
+✓ Validasi bisa ditambahkan di setter
+✓ Fleksibilitas mengubah implementasi internal
+
+═══════════════════════════════════════════════════════════════════════
+
+2. CONSTRUCTOR OVERLOADING
+═══════════════════════════════════════════════════════════════════════
+
+File: Pegawai.java
+
+Konsep:
+- Satu class memiliki beberapa constructor dengan parameter berbeda
+- Constructor dipilih berdasarkan parameter yang diberikan
+
+Contoh Kode:
+```java
+public class Pegawai {
+    // Constructor 1: Tanpa parameter
+    public Pegawai() {
+    }
+    
+    // Constructor 2: Untuk INSERT (tanpa id)
+    public Pegawai(String nama, String jabatan, double gaji, String departemen) {
+        this.nama = nama;
+        this.jabatan = jabatan;
+        this.gaji = gaji;
+        this.departemen = departemen;
+    }
+    
+    // Constructor 3: Untuk SELECT/UPDATE (dengan id)
+    public Pegawai(int id, String nama, String jabatan, double gaji, String departemen) {
+        this.id = id;
+        this.nama = nama;
+        this.jabatan = jabatan;
+        this.gaji = gaji;
+        this.departemen = departemen;
+    }
+}
+```
+
+Penggunaan:
+```java
+Pegawai p1 = new Pegawai();  // Constructor 1
+Pegawai p2 = new Pegawai("Ahmad", "Staff", 5000000, "IT");  // Constructor 2
+Pegawai p3 = new Pegawai(1, "Ahmad", "Staff", 5000000, "IT");  // Constructor 3
+```
+
+Manfaat:
+✓ Fleksibilitas dalam membuat objek
+✓ Kode lebih clean dan readable
+
+═══════════════════════════════════════════════════════════════════════
+
+3. INTERFACE
+═══════════════════════════════════════════════════════════════════════
+
+File: PegawaiDAO.java
+
+Konsep:
+- Interface mendefinisikan kontrak (method signature)
+- Class yang implement interface HARUS mengimplementasikan semua method
+- Mendukung abstraksi dan polymorphism
+
+Contoh Kode:
+```java
+public interface PegawaiDAO {
+    void insert(Pegawai pegawai, String metode) throws Exception;
+    List<Pegawai> selectAll(String metode) throws Exception;
+    void update(Pegawai pegawai, String metode) throws Exception;
+    void delete(int id, String metode) throws Exception;
+}
+```
+
+Implementasi:
+```java
+public class PegawaiDAOImpl implements PegawaiDAO {
+    @Override
+    public void insert(Pegawai pegawai, String metode) throws Exception {
+        // Implementasi method insert
+    }
+    
+    @Override
+    public List<Pegawai> selectAll(String metode) throws Exception {
+        // Implementasi method selectAll
+    }
+    // ... method lainnya
+}
+```
+
+Manfaat:
+✓ Pemisahan kontrak dan implementasi
+✓ Mudah diganti implementasinya (loose coupling)
+✓ Mendukung multiple implementation
+
+═══════════════════════════════════════════════════════════════════════
+
+4. EXCEPTION HANDLING
+═══════════════════════════════════════════════════════════════════════
+
+File: PegawaiDAOImpl.java, MainApp.java
+
+Konsep:
+- Try-catch-finally untuk menangani error
+- Throws untuk melempar exception ke pemanggil
+- Custom error message untuk debugging
+
+Contoh Kode:
+```java
+public void insert(Pegawai p, String metode) throws Exception {
+    Connection conn = null;
+    try {
+        conn = DatabaseConfig.getConnection();
+        // ... kode insert
+    } catch (SQLException e) {
+        throw new Exception("Error INSERT: " + e.getMessage());
+    } finally {
+        if (conn != null) conn.close();  // Selalu tutup koneksi
+    }
+}
+```
+
+Penggunaan di GUI:
+```java
+try {
+    testInsert(jumlahData);
+    textArea.append("\n✓ Testing selesai!\n");
+} catch (Exception ex) {
+    textArea.append("\n✗ ERROR: " + ex.getMessage() + "\n");
+    JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+}
+```
+
+Manfaat:
+✓ Aplikasi tidak crash saat error
+✓ Error message jelas untuk debugging
+✓ Resource (koneksi) selalu ditutup dengan finally
+
+═══════════════════════════════════════════════════════════════════════
+
+5. COLLECTIONS - HASHMAP
+═══════════════════════════════════════════════════════════════════════
+
+File: PerformanceTest.java
+
+Konsep:
+- HashMap untuk menyimpan pasangan key-value
+- Generic <String, Double> untuk type safety
+- Efisien untuk lookup data
+
+Contoh Kode:
+```java
+public HashMap<String, Double> testInsert(int jumlahData) throws Exception {
+    HashMap<String, Double> hasil = new HashMap<>();
+    
+    // Test Statement
+    long startTime = System.nanoTime();
+    // ... kode testing
+    long endTime = System.nanoTime();
+    double durasiMs = (endTime - startTime) / 1_000_000.0;
+    
+    hasil.put("Statement", durasiMs);  // Simpan hasil
+    hasil.put("PreparedStatement", durasiMs2);
+    hasil.put("CallableStatement", durasiMs3);
+    
+    return hasil;
+}
+```
+
+Penggunaan:
+```java
+HashMap<String, Double> hasil = test.testInsert(100);
+double waktuStatement = hasil.get("Statement");
+double waktuPrepared = hasil.get("PreparedStatement");
+```
+
+Manfaat:
+✓ Menyimpan hasil testing dengan key yang jelas
+✓ Mudah diakses dengan key
+✓ Type safe dengan Generics
+
+═══════════════════════════════════════════════════════════════════════
+
+6. GENERICS
+═══════════════════════════════════════════════════════════════════════
+
+File: PegawaiDAO.java, PerformanceTest.java
+
+Konsep:
+- Type parameter untuk type safety
+- Menghindari casting manual
+- Compile-time type checking
+
+Contoh Kode:
+```java
+// Tanpa Generics (cara lama)
+List list = new ArrayList();
+list.add("String");
+String s = (String) list.get(0);  // Perlu casting
+
+// Dengan Generics (cara baru)
+List<Pegawai> list = new ArrayList<>();
+list.add(new Pegawai());
+Pegawai p = list.get(0);  // Tidak perlu casting
+
+// HashMap dengan Generics
+HashMap<String, Double> hasil = new HashMap<>();
+hasil.put("Statement", 123.45);
+Double waktu = hasil.get("Statement");  // Type safe
+```
+
+Manfaat:
+✓ Error terdeteksi saat compile (bukan runtime)
+✓ Tidak perlu casting manual
+✓ Kode lebih aman dan readable
+
+═══════════════════════════════════════════════════════════════════════
+
+7. GUI dengan SWING
+═══════════════════════════════════════════════════════════════════════
+
+File: MainApp.java
+
+Konsep:
+- JFrame sebagai window utama
+- JPanel untuk grouping components
+- Layout Manager (BorderLayout, FlowLayout, GridLayout)
+- Event Handling dengan ActionListener
+
+Contoh Kode:
+```java
+public class MainApp extends JFrame {
+    private JButton btnTest;
+    private JTextArea textArea;
+    
+    public MainApp() {
+        setTitle("Perbandingan Performa JDBC");
+        setSize(800, 600);
+        setLayout(new BorderLayout());
+        
+        btnTest = new JButton("Jalankan Test");
+        textArea = new JTextArea();
+        
+        add(btnTest, BorderLayout.NORTH);
+        add(new JScrollPane(textArea), BorderLayout.CENTER);
+    }
+}
+```
+
+Manfaat:
+✓ User-friendly interface
+✓ Interaktif dengan button dan dropdown
+✓ Real-time feedback di text area
+
+═══════════════════════════════════════════════════════════════════════
+
+8. EVENT HANDLING
+═══════════════════════════════════════════════════════════════════════
+
+File: MainApp.java
+
+Konsep:
+- ActionListener untuk menangani event button click
+- Anonymous inner class untuk implementasi listener
+- Callback mechanism
+
+Contoh Kode:
+```java
+btnTest.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // Kode yang dijalankan saat button diklik
+        jalankanTest();
+    }
+});
+
+btnClear.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        textArea.setText("");
+    }
+});
+```
+
+Manfaat:
+✓ Aplikasi responsif terhadap user action
+✓ Separation of concerns (UI logic terpisah)
+✓ Event-driven programming
+
+═══════════════════════════════════════════════════════════════════════
+
+9. THREADING dengan SWINGWORKER
+═══════════════════════════════════════════════════════════════════════
+
+File: MainApp.java
+
+Konsep:
+- SwingWorker untuk operasi background
+- Mencegah GUI freeze saat proses berat
+- Thread-safe update GUI
+
+Contoh Kode:
+```java
+SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+    @Override
+    protected Void doInBackground() throws Exception {
+        // Proses berat di background thread
+        testInsert(jumlahData);
+        return null;
+    }
+    
+    @Override
+    protected void done() {
+        // Update GUI setelah selesai
+        btnTest.setEnabled(true);
+    }
+};
+
+worker.execute();
+```
+
+Manfaat:
+✓ GUI tetap responsif saat testing
+✓ User bisa lihat progress real-time
+✓ Aplikasi tidak freeze
+
+═══════════════════════════════════════════════════════════════════════
+
+RINGKASAN KONSEP PBO YANG DIGUNAKAN:
+═══════════════════════════════════════════════════════════════════════
+
+✓ Encapsulation (private attributes + getter/setter)
+✓ Constructor Overloading (3 constructor berbeda)
+✓ Interface (PegawaiDAO)
+✓ Interface Implementation (PegawaiDAOImpl)
+✓ Exception Handling (try-catch-finally, throws)
+✓ Collections (ArrayList, HashMap)
+✓ Generics (List<Pegawai>, HashMap<String, Double>)
+✓ GUI Swing (JFrame, JPanel, JButton, JTextArea, dll)
+✓ Event Handling (ActionListener)
+✓ Threading (SwingWorker)
+
+═══════════════════════════════════════════════════════════════════════
+
+Semua konsep ini sesuai dengan materi PBO Lanjut dan diimplementasikan
+dengan cara yang sederhana namun efektif untuk tujuan pembelajaran.
+
+═══════════════════════════════════════════════════════════════════════

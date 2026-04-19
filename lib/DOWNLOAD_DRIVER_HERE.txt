@@ -1,0 +1,33 @@
+DOWNLOAD POSTGRESQL JDBC DRIVER
+=================================
+
+File yang dibutuhkan: postgresql-42.7.1.jar (atau versi terbaru)
+
+CARA DOWNLOAD:
+
+1. Dari Website Resmi:
+   https://jdbc.postgresql.org/download/
+   
+   - Pilih versi terbaru (42.7.1 atau lebih baru)
+   - Download file .jar
+   - Copy ke folder ini (lib/)
+
+2. Dari Maven Repository:
+   https://mvnrepository.com/artifact/org.postgresql/postgresql/42.7.1
+   
+   - Klik link "jar" untuk download
+   - Copy ke folder ini (lib/)
+
+3. Direct Link (jika masih aktif):
+   https://jdbc.postgresql.org/download/postgresql-42.7.1.jar
+
+SETELAH DOWNLOAD:
+- Pastikan file bernama: postgresql-42.7.1.jar
+- Letakkan di folder lib/ (folder ini)
+- Refresh project di Eclipse
+- File akan otomatis ter-detect oleh .classpath
+
+VERIFIKASI:
+- Klik kanan project di Eclipse
+- Properties → Java Build Path → Libraries
+- Harus ada: postgresql-42.7.1.jar

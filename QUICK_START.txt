@@ -1,0 +1,120 @@
+╔══════════════════════════════════════════════════════════════════════╗
+║                    QUICK START GUIDE                                 ║
+║          Perbandingan Performa JDBC - PostgreSQL                     ║
+╚══════════════════════════════════════════════════════════════════════╝
+
+📋 CHECKLIST SETUP (Ikuti urutan ini!)
+
+□ STEP 1: INSTALL POSTGRESQL
+  ├─ Download: https://www.postgresql.org/download/
+  ├─ Install dengan default settings
+  ├─ Catat password user 'postgres'
+  └─ PostgreSQL akan jalan di port 5432
+
+□ STEP 2: BUAT DATABASE
+  ├─ Buka pgAdmin 4
+  ├─ Klik kanan Databases → Create → Database
+  ├─ Nama: db_pegawai
+  └─ Klik Save
+
+□ STEP 3: JALANKAN SQL SCRIPT
+  ├─ Klik kanan database 'db_pegawai' → Query Tool
+  ├─ Buka file: database_setup.sql
+  ├─ Copy semua isi (skip baris 5-6 yang di-comment)
+  ├─ Paste ke Query Tool
+  └─ Klik Execute (▶️) atau tekan F5
+
+□ STEP 4: VERIFIKASI DATABASE
+  ├─ Jalankan: SELECT * FROM pegawai;
+  ├─ Harus muncul 5 data
+  └─ Cek functions dengan query di database_setup.sql baris terakhir
+
+□ STEP 5: DOWNLOAD JDBC DRIVER
+  ├─ Buka: https://jdbc.postgresql.org/download/
+  ├─ Download: postgresql-42.7.1.jar
+  └─ Copy ke folder: lib/
+
+□ STEP 6: IMPORT KE ECLIPSE
+  ├─ File → Import → Existing Projects into Workspace
+  ├─ Browse ke folder: PerbandinganPerformaJDBC_PostgreSQL
+  └─ Klik Finish
+
+□ STEP 7: EDIT PASSWORD
+  ├─ Buka: src/com/jdbc/config/DatabaseConfig.java
+  ├─ Cari baris: private static final String PASSWORD = "admin";
+  └─ Ganti "admin" dengan password PostgreSQL Anda
+
+□ STEP 8: RUN APLIKASI
+  ├─ Buka: src/com/jdbc/main/MainApp.java
+  ├─ Klik kanan → Run As → Java Application
+  └─ Lihat output di Console
+
+═══════════════════════════════════════════════════════════════════════
+
+🎯 TESTING PERTAMA (Setelah aplikasi jalan)
+
+1. Pilih menu: 1 (Test INSERT 10 data)
+2. Lihat hasil perbandingan performa
+3. Pilih menu: 4 (Test SELECT)
+4. Pilih menu: 9 (Test SEMUA OPERASI 10 data)
+
+═══════════════════════════════════════════════════════════════════════
+
+❌ TROUBLESHOOTING CEPAT
+
+ERROR: "ClassNotFoundException: org.postgresql.Driver"
+FIX:  JDBC Driver belum ditambahkan
+      → Klik kanan project → Properties → Java Build Path → Libraries
+      → Add External JARs → Pilih postgresql-42.7.1.jar
+
+ERROR: "Connection refused"
+FIX:  PostgreSQL tidak jalan
+      → Buka Services (Windows) → Start postgresql-x64-xx
+
+ERROR: "password authentication failed"
+FIX:  Password salah
+      → Edit DatabaseConfig.java → Ganti PASSWORD
+
+ERROR: "database db_pegawai does not exist"
+FIX:  Database belum dibuat
+      → Ulangi STEP 2
+
+ERROR: "function insert_pegawai does not exist"
+FIX:  Functions belum dibuat
+      → Ulangi STEP 3
+
+═══════════════════════════════════════════════════════════════════════
+
+📊 STRUKTUR PACKAGE
+
+com.jdbc
+├── config      → DatabaseConfig.java (koneksi database)
+├── model       → Pegawai.java (entity class)
+├── dao         → PegawaiDAO.java & PegawaiDAOImpl.java (data access)
+├── util        → PerformanceTest.java (testing performa)
+└── main        → MainApp.java (aplikasi utama)
+
+═══════════════════════════════════════════════════════════════════════
+
+📝 UNTUK JURNAL NANTI
+
+Screenshot yang perlu diambil:
+1. ✅ Database di pgAdmin (tabel + functions)
+2. ✅ Struktur package di Eclipse
+3. ✅ Output test INSERT
+4. ✅ Output test SELECT
+5. ✅ Output test UPDATE
+6. ✅ Output test DELETE
+7. ✅ Tabel perbandingan performa
+
+Analisis yang perlu ditulis:
+- PreparedStatement paling cepat untuk INSERT/UPDATE berulang
+- Statement paling lambat (compile ulang setiap kali)
+- CallableStatement konsisten untuk logic kompleks
+- Perbedaan performa makin besar saat data banyak
+
+═══════════════════════════════════════════════════════════════════════
+
+🚀 GOOD LUCK!
+
+Jika ada error, baca README.md untuk penjelasan lengkap!
