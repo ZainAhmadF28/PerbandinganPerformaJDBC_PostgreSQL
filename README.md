@@ -1,8 +1,8 @@
-# Perbandingan Performa JDBC - PostgreSQL
+# Perbandingan Performa JDBC - MySQL
 ## Statement vs PreparedStatement vs CallableStatement
 
 ### 📋 Deskripsi Proyek
-Aplikasi Java sederhana dengan GUI Swing untuk menganalisis performa tiga metode JDBC dalam operasi CRUD (Create, Read, Update, Delete) pada database PostgreSQL.
+Aplikasi Java sederhana dengan GUI Swing untuk menganalisis performa tiga metode JDBC dalam operasi CRUD (Create, Read, Update, Delete) pada database MySQL.
 
 **Tingkat:** Mahasiswa PBO Lanjut
 
@@ -37,7 +37,7 @@ Aplikasi Java sederhana dengan GUI Swing untuk menganalisis performa tiga metode
 ## 📂 Struktur Proyek
 
 ```
-PerbandinganPerformaJDBC_PostgreSQL/
+PerbandinganPerformaJDBC_MySQL/
 ├── src/
 │   └── com.jdbc/
 │       ├── config/
@@ -52,7 +52,7 @@ PerbandinganPerformaJDBC_PostgreSQL/
 │       └── main/
 │           └── MainApp.java             # GUI Swing + Event Handling
 ├── lib/
-│   └── postgresql-42.7.1.jar            # JDBC Driver
+│   └── mysql-connector-j-8.0.33.jar     # JDBC Driver
 ├── database_setup.sql                    # Script SQL
 └── README.md
 ```
@@ -61,35 +61,40 @@ PerbandinganPerformaJDBC_PostgreSQL/
 
 ## 🚀 CARA SETUP (5 LANGKAH MUDAH)
 
-### **LANGKAH 1: Install PostgreSQL**
-1. Download: https://www.postgresql.org/download/
-2. Install (Next-next-next)
-3. Catat password untuk user `postgres`
-4. Default port: 5432
+### **LANGKAH 1: Install MySQL**
+1. Download: https://dev.mysql.com/downloads/installer/
+2. Install MySQL Community Server (Next-next-next)
+3. Catat password untuk user `root`
+4. Default port: 3306
 
 ### **LANGKAH 2: Buat Database**
-1. Buka **pgAdmin 4** (sudah terinstall bersama PostgreSQL)
-2. Klik kanan **Databases** → **Create** → **Database**
-3. Nama: `db_pegawai`
-4. Klik **Save**
+1. Buka **MySQL Workbench** (sudah terinstall bersama MySQL)
+2. Klik koneksi **Local instance MySQL**
+3. Buat database baru:
+   ```sql
+   CREATE DATABASE db_pegawai;
+   USE db_pegawai;
+   ```
 
 ### **LANGKAH 3: Jalankan Script SQL**
-1. Klik kanan database `db_pegawai` → **Query Tool**
-2. Buka file `database_setup.sql`
-3. Copy SEMUA isi (skip baris 5-6 yang di-comment)
-4. Paste ke Query Tool → Klik **Execute** (▶️)
-5. Verifikasi: `SELECT * FROM pegawai;` (harus ada 5 data)
+1. Di MySQL Workbench, buka file `database_setup.sql`
+2. Pastikan database `db_pegawai` sudah dipilih
+3. Klik **Execute** (⚡ icon) atau tekan Ctrl+Shift+Enter
+4. Verifikasi: `SELECT * FROM pegawai;` (harus ada 5 data)
 
 ### **LANGKAH 4: Download JDBC Driver**
-1. Download: https://jdbc.postgresql.org/download/
-2. Pilih `postgresql-42.7.1.jar`
-3. Copy ke folder `lib/` di proyek
+1. Download: https://dev.mysql.com/downloads/connector/j/
+2. Pilih **Platform Independent** → Download ZIP
+3. Extract, ambil file `mysql-connector-j-8.0.33.jar`
+4. Copy ke folder `lib/` di proyek
 
 ### **LANGKAH 5: Import & Run di Eclipse**
 1. **File** → **Import** → **Existing Projects into Workspace**
 2. Browse ke folder proyek → **Finish**
-3. Buka `DatabaseConfig.java` → Ganti PASSWORD sesuai PostgreSQL Anda
-4. Run `MainApp.java` → GUI akan muncul!
+3. Klik kanan project → **Properties** → **Java Build Path** → **Libraries**
+4. **Add External JARs** → Pilih `mysql-connector-j-8.0.33.jar`
+5. Buka `DatabaseConfig.java` → Ganti PASSWORD sesuai MySQL Anda
+6. Run `MainApp.java` → GUI akan muncul!
 
 ---
 
@@ -97,7 +102,7 @@ PerbandinganPerformaJDBC_PostgreSQL/
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│        PERBANDINGAN PERFORMA JDBC - PostgreSQL          │
+│           PERBANDINGAN PERFORMA JDBC - MySQL            │
 │   Statement vs PreparedStatement vs CallableStatement   │
 ├─────────────────────────────────────────────────────────┤
 │ Pilih Operasi: [INSERT ▼]  Jumlah Data: [100 ▼]       │
@@ -199,26 +204,28 @@ Berdasarkan testing dengan 100 data:
 
 ## ❌ TROUBLESHOOTING
 
-### Error: "ClassNotFoundException: org.postgresql.Driver"
+### Error: "ClassNotFoundException: com.mysql.cj.jdbc.Driver"
 **Solusi:** JDBC Driver belum ditambahkan
 - Klik kanan project → Properties → Java Build Path → Libraries
-- Add External JARs → Pilih `postgresql-42.7.1.jar`
+- Add External JARs → Pilih `mysql-connector-j-8.0.33.jar`
 
-### Error: "Connection refused"
-**Solusi:** PostgreSQL tidak jalan
-- Windows: Services → Start `postgresql-x64-xx`
+### Error: "Connection refused" atau "Communications link failure"
+**Solusi:** MySQL tidak jalan
+- Windows: Services → Start `MySQL80`
+- Atau buka MySQL Workbench untuk cek koneksi
 
-### Error: "password authentication failed"
+### Error: "Access denied for user 'root'@'localhost'"
 **Solusi:** Password salah
-- Edit `DatabaseConfig.java` → Ganti PASSWORD
+- Edit `DatabaseConfig.java` → Ganti PASSWORD sesuai password MySQL Anda
 
 ### Error: "database db_pegawai does not exist"
 **Solusi:** Database belum dibuat
 - Ulangi Langkah 2
 
-### Error: "function insert_pegawai does not exist"
-**Solusi:** Functions belum dibuat
+### Error: "PROCEDURE db_pegawai.insert_pegawai does not exist"
+**Solusi:** Stored procedures belum dibuat
 - Ulangi Langkah 3 (jalankan script SQL)
+- Verifikasi: `SHOW PROCEDURE STATUS WHERE Db = 'db_pegawai';`
 
 ---
 
@@ -230,7 +237,7 @@ Berdasarkan testing dengan 100 data:
 3. ✅ Hasil test SELECT
 4. ✅ Hasil test UPDATE
 5. ✅ Hasil test DELETE
-6. ✅ Database di pgAdmin
+6. ✅ Database di MySQL Workbench
 7. ✅ Struktur package di Eclipse
 
 ### Analisis untuk Jurnal:
@@ -245,8 +252,8 @@ Berdasarkan testing dengan 100 data:
 ## 💻 TEKNOLOGI
 
 - **Java**: JDK 8+
-- **Database**: PostgreSQL 14/15/16
-- **JDBC Driver**: PostgreSQL 42.7.1
+- **Database**: MySQL 8.0+
+- **JDBC Driver**: MySQL Connector/J 8.0.33
 - **IDE**: Eclipse
 - **GUI**: Java Swing (javax.swing)
 
@@ -260,9 +267,9 @@ Kelompok PBO Lanjut - Analisis Performa JDBC
 ## 📞 BANTUAN
 
 Jika ada masalah:
-1. Pastikan PostgreSQL sudah running
+1. Pastikan MySQL sudah running (cek di Services atau MySQL Workbench)
 2. Pastikan database `db_pegawai` sudah dibuat
-3. Pastikan script SQL sudah dijalankan
+3. Pastikan script SQL sudah dijalankan (cek stored procedures)
 4. Pastikan JDBC Driver sudah ditambahkan ke Build Path
 5. Pastikan password di `DatabaseConfig.java` sudah benar
 
